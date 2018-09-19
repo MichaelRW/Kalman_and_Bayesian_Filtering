@@ -1,0 +1,1383 @@
+
+             USER'S GUIDE FOR KALM 'N SMOOTH (VERSION 2.0)
+             =============================================
+
+Kalm 'N Smooth was the main tutorial tool used in conjunction
+with the previous edition of this book.  It has now been supplanted
+by MATLAB for the versatility and power of the latter.  Kalm 'N Smooth
+is still effective software for solving many Kalman filtering problems,
+so it is included for those who prefer a menu-oriented program.  This
+user's guide in its text form is understandably limited in its typesetting
+qualities and hence must be read with caution and a little imagination.
+We suggest that the user's guide be printed out for easier perusal.
+
+Before describing the capabilities of the Kalm 'N Smooth
+software package, we wish to emphasize that the programs were
+written primarily for instructional purposes and in spite of its
+limitations, we invite its usage for solving practical problems
+as well.  No extraordinary attempt was made to make the software
+especially efficient, either in terms of speed, program or memory
+capacity.  Quite to the contrary, "user friendliness" was the
+prime consideration in the software development.  All programs in
+the software package are menu oriented, and the user is prompted
+at each step as to what needs to be done to get to the next step.
+And the user will find that even on a personal computer with
+modest speed, most assigned tasks will be executed expediently
+enough for tutorial purposes.
+
+
+OVERVIEW OF THE SOFTWARE CAPABILITIES
+
+Covariance Analysis for Optimal Filtering and Smoothing:
+
+     In covariance analysis, the random input (measurement) and
+output (estimate) processes are not generated.  Rather, the
+program simply cycles through the error covariance equations
+recursively beginning with the initial covariance.  In order to
+do this, of course, the user must specify the four key parameters
+phi, Q, H, and R, plus the initial P(0)-.  The end result that
+the user would want to derive from this processing is a sequence
+of error covariance matrices.  These data contain information
+about the estimation accuracy under optimal conditions.  There
+are separate functions available for filtering and smoothing.
+The required parameters are identical for both, except that in
+the latter, the smoothing interval must be specified in addition.
+
+Suboptimal Analysis:
+
+     It is not difficult to imagine a sequence of filter gains
+that are suboptimal.  They could be the result of a mismodeled
+situation, or the suboptimal gain sequence might be specified
+completely arbitrarily with no connection to any model.
+
+Regardless, once the gain sequence is specified the structure of
+the filter dictates that the estimate update and projection be
+done in accordance with Eqs. 5.5.8 and 5.5.23.
+
+The theory allows us to compute the error covariance associated
+with this operation for any arbitrary gain K (with the proper
+dimensions, of course).  The general recursive equations for the
+error covariance (optimal or suboptimal) can be found in Eqs. 5.5.18
+and 5.5.25.
+
+The suboptimal analysis program simply implements these
+equations.  Obviously, the user must specify the true phi, Q, H,
+and R which define the structure of the filter.  This is
+sometimes referred to as the "truth" model.  The user must also
+specify the gain sequence K.  If this comes from an "untruth"
+model, then this system must be run first to generate the
+appropriate number of computational steps, the gains saved in a
+data file, and then these suboptimal gains used in the suboptimal
+component program.  (Caveat:  There are some restrictions to this
+elementary approach to suboptimal analysis.  See Section 6.7 of the
+text for details).
+
+Monte Carlo Kalman Filter and Smoother Simulation:
+
+     In a Monte Carlo filter simulation, a sample realization of
+the input (measurement) process must first be generated using the
+random process generation function described below.  Separate
+Monte Carlo processing functions are available for filtering and
+smoothing.  Therefore, in addition to parameters specified above
+for the covariance analysis, the user must specify the
+measurement sequence z as well as an initial state estimate x(0)-.
+The filter or smoother then yields a corresponding output
+(estimate) process that constitutes simply one sample realization
+for the specified number of computational steps.  This can, of
+course, be repeated over and over again with different noisy
+measurement sequences made from the random process generation.
+In doing so, the user obtains an ensemble of experiments which
+may be analyzed statistically.  This makes a vivid demonstration
+that the error covariance sequence associated with the experiment
+does, in fact, yield meaningful information about the estimation
+accuracy.
+
+Random Process Generation:
+
+     In Monte Carlo simulation work we often have occasion to
+generate a discrete random sequence in state-space form (see
+Eqs. 5.5.1 and 5.5.2).  This form allows the generation of any
+stationary Gaussian process with a given rational spectral function
+using the modeling methods of Chapter 5.  Clearly, if the user
+wishes to generate a "noiseless" version of the process, the
+variance of the parameter v(k) can simply be set to zero.  This
+program requires the user to specify the usual phi, Q, H, and R
+parameters, and also the initial conditions on x(k).  The end
+results are files for both x(k) and z(k), which can then be used in
+subsequent programs.
+
+Schmidt Filtering (covariance analysis and Monte Carlo simulation):
+
+     Schmidt filtering may be executed with Kalm 'N Smooth by setting
+up a state vector that consists of both the reduced-order states x and
+the "consider" states y (see Eq. 9.4.1).  The Kalman filter parameters
+are to be set up according to Eqs. 9.4.2 and 9.4.3.  When the Schmidt
+filter function is invoked, the user will be prompted for the number
+of reduced-order states (x).  This number defines where the partition
+separating the x and y subvectors lie.  In the subsequent processing,
+the Schmidt model is treated like a regular Kalman filter except the
+gains associated with the y states are zeroed on every iteration.
+Even though this is not the way a Schmidt filter is actually implemented,
+this way of processing performs the same exact function.  There are
+separate functions to construct a Schmidt filter for covariance
+analysis and for Monte Carlo simulation.
+
+Steady-State Characteristic Roots Computation:
+
+     It was mentioned in Chapter 6.9 that a Kalman filter behaves
+much the same as any other constant-parameter digital filter when
+(and if) the filter gain reaches a steady-state condition.  The
+user only needs to specify the usual phi, Q, H, and R
+parameters and the program computes the steady-state gain.  The
+end result of this program is the set of characteristic roots of
+the filter in the z-plane.
+
+State Transition Matrix (STM) and Q Matrix Computations:
+
+     Calculation of the STM and Q matrices in higher-order
+systems is an onerous task with paper-and-pencil methods.  This
+program relieves the user of this task.  We begin with the
+continuous model for the system state vector x:
+
+          dx/dt = F x + G u
+
+where F and G are constant matrices, and u is the input vector
+whose elements are independent unity white noises.  The user
+specifies F and G in the model and the step size Dt, and the
+program does the rest.  The end products are data files for both
+phi(k) and Q(k) that can be used in subsequent programs.
+
+Discrete Fourier Transform (DFT), Inverse DFT, and Periodogram:
+
+     In signal analysis, it is important to be able to go back
+and forth between the time and frequency domain.  Thus direct and
+indirect Fourier transform programs have been included in the
+software package.  Note that the straightforward Discrete Fourier
+Transform (DFT) is implemented in this software (in contrast to
+the FFT), so the number of data points is not restricted to an
+integer power of 2.  The DFT takes a little longer to execute
+than the FFT, but from a tutorial viewpoint it is better because
+it is less restrictive.  In the included programs, the data
+stream may be of any reasonable length and may be either real or
+complex in both the time and frequency domains.  It is worth
+noting that the DFT program transforms an N-point time function
+into an N-point complex function in the frequency domain.  If the
+original time function is real, this of course leads to
+redundancy in the frequency domain, with points above the
+foldover frequency being complex conjugates of the corresponding
+lower-frequency points.  We all know that this is excess baggage
+for the special case of real-valued time-domain functions, but it
+does no harm to do so and is correct mathematically.
+
+The periodogram of a time signal is also of special interest
+in signal analysis.  Recall from Chapter 2 that the periodogram
+is proportional to the square of the Fourier transform, and that
+it has a close statistical connection to the autocorrelation
+function.  Therefore, in the DFT program, an additional output is
+provided which is proportional to the square of the magnitude of
+the Fourier transform, i.e. the periodogram.
+
+Autocorrelation Function:
+
+     The autocorrelation function is a basic descriptor of a
+stationary random process.  There is, of course, no way that one
+can determine the true autocorrelation function from just one
+sample realization of a process.  First, there is the matter of
+the sample length; and second there is the problem of ergodicity.
+However, if the data span is long relative to the pertinent
+correlation times, and if we assume that the sample realization
+at hand is representative of all possible samples (i.e., assume
+ergodicity), then we can compute something that approximates the
+true autocorrelation function.  This is done simply by
+multiplying the time function by itself shifted t units in time,
+and then averaging.  The autocorrelation function program
+included in this software package does just that.  The
+approximation so obtained does have limitations, though, and
+these should be recognized, especially when the number of shifts
+(the "tau" parameter) is appreciable relative to the data span (see
+Chapter 2).
+
+Data Graphing:
+
+     Who was it that said, "A picture is worth a thousand words"?
+How true this is, especially in analysis work.  For this reason,
+data plotting capability has been built into this software
+package in two ways.  First, in procedures where it is
+appropriate, the user is provided with a prompt such as "Press
+ENTER to view the data" after a procedure is executed.  This
+provides a quick look at the data in bar graph form without
+formal plotting.  Second, a more formal data graphing capability
+is provided in a separate program whereby several data files may
+be plotted together on the same X-Y or line (unspecified
+independent variable) graphs.
+
+Note on Learning to Use the Software:
+
+     A User's Guide giving detailed instructions on how to use
+the accompanying software follows in the next section.  After
+installation of the programs on your computer, we suggest that
+you first familiarize yourself with the various features provided
+in this software package by working simple examples of your own
+creation.  For example, to check out the DFT procedure, you might
+try creating a data file for a simple 16-point unit impulse in
+the time domain.  Then take the DFT of this function (which we
+know to have a constant magnitude); and, finally, form the
+inverse of the DFT to see if you get the unit impulse back again
+(within roundoff error, of course).  In this way, you not only
+become familiar with the various procedures, but you gain a
+degree of confidence that the programs are doing the job and
+giving the correct answers.
+
+You are now ready to begin using the accompanying software
+package.  Be forewarned that a modest amount of practice is
+necessary before you will begin to feel completely comfortable
+with the software.  This is true with any new software package,
+and it is to be expected.  We trust that the "learning curve"
+will be brief in this case.  Once you get past the initial
+familiarization phase, we think you will find that Kalman
+filtering can be fun!
+
+
+HARDWARE REQUIREMENTS
+
+The programs provided will run on an IBM PC, PS/2, XT, or AT (or
+a 100 percent compatible computer) with 640 KBytes of internal
+memory.  Most of the standard display adapters and printers are
+supported.  Color displays are recommended.  DOS Version 3.2 or
+later should be used.
+
+
+INSTALLING PROGRAMS
+
+The programs can be executed from the floppy disk provided or
+from a hard disk.  If it is desired to have the programs from
+your original diskette transferred to another diskette or
+installed onto a hard disk, simply copy all the programs over
+with any file copying utility.  In DOS, the file copying utility
+COPY is suitable for such a task.  Important:  All programs and
+files furnished on the original diskette must be located on the
+same directory path.  If installing on a hard disk, a (programs)
+subdirectory should be set up on the hard disk for this purpose
+of containing the furnished programs and files.  For efficient
+management, it is recommended that a separate (work) subdirectory
+be set up on the hard disk for new data files created in the
+process of using these programs.  Starting from this work
+subdirectory, the need program can be executed by properly
+specifying the proper path and the appropriate program name.  The
+following example shows the execution of the program KALM which
+resides in the programs subdirectory named PROGS while all data
+files specified during execution will by default be stored or
+read from the work subdirectory named KALMDATA:
+
+     C:\KALMDATA> \PROGS\KALM
+
+
+PROGRAMS AND FILES
+
+On the 1.44-MByte 3.5-inch diskette furnished with the book, there
+are a total of thirteen files and a subdirectory of files
+intended for a demonstration.  Of those in the main directory,
+four are executable programs that work together to provide Kalman
+Filter-related functions: KALM.EXE, PROCESOR.EXE, EIGNPROC.EXE,
+STMQPROC.EXE.  A fifth executable program N-LIES.EXE contains
+simple utilities intended to provide the user some additional
+analysis and graphing capabilities.  In addition to these
+programs, the diskette also contains several display drivers for
+some of the more common graphics standards available today for
+IBM-compatible PC systems.  These driver files are identified by
+the extension  .BGI:
+
+          CGA.BGI             For IBM CGA or MCGA
+          EGAVGA.BGI          For IBM EGA or VGA
+          HERC.BGI            For Hercules Monochrome
+          ATT.BGI             For AT&T 6300 (400 line)
+          PC3270.BGI          For IBM 3270 PC
+          IBM8514.BGI         For IBM-8514
+
+
+The capability for printing onscreen-generated graphics is also
+supported.  The two files associated with this capability are
+named DEFFONT.GLF and PRINTER.CFG .  PRINTER.CFG is an ASCII text
+file that contains user-defineable parameters pertaining to the
+desirable printer and printing configurations.  Prior to doing
+any printing with these programs, PRINTER.CFG must be properly
+set up.  See the section on Printer Configurations for
+instructions to do this, using the Data Editor program function
+provided with the N-LIES program.
+
+
+KALM
+
+The main program KALM.EXE handles input data files and runs in
+conjunction with several processing programs to provide Kalman
+filtering and other utility functions.  They comprise the
+following:
+
+    PROCESOR.EXE -  Handles all the Kalman filtering functions
+                    including generation of random processes;
+
+    EIGNPROC.EXE -  Computes eigenvalues and eigenvectors of
+                    the state space model and also the steady-
+                    state covariance of a time-invariant state
+                    model;
+
+   STMQPROC.EXE -   Computes the state transition matrix and
+                    the process noise covariance matrix for a
+                    discrete-time model from a continuous-time
+                    equivalent.
+
+There is a limit to the size of the Kalman filter that can be
+modeled with the KALM 'N SMOOTH programs.  The state
+dimensionality must be no larger than 20.  The limit on the
+dimensionality on the measurement space is also 20.  Therefore,
+the largest H matrix allowable is 20x20.
+
+The two principal data elements utilized here to manage the flow
+of information are the Parameter and Data files.  They are
+described in detail in the discussion that follows.
+
+Parameter File:
+
+     By convention, the full set of Kalman parameters that may be used
+consist of the following, although in certain cases, some are not
+necessary:
+
+  1.  State transition matrix (phi)
+  2.  Process noise covariance matrix (Q)
+  3.  Measurement matrix (H)
+  4.  Measurement noise covariance matrix (R)
+  5.  Initial state (x0)
+  6.  Initial error covariance (P0)
+  7.  Measurement (z)
+  8.  State output (x)
+
+In addition to the names of the Data Files for the Kalman
+parameters above, a Parameter File also records several other
+items which includes the mode of data entry for the respective
+Kalman parameter as well as the dimensions of the state and
+measurement spaces.  Although these parameters are important for
+the data processing that follows, they are primarily intended for
+housekeeping functions by the programs that use them and should
+really be transparent to the user.
+
+Data File:
+
+     A Data File is an ASCII text  file which allows the user to input
+information for a particular Kalman parameter.  There are three
+standard modes of data entry into the processing Kalman filter:
+1) constant , 2) file, and 3) equation (see Mode of Data Entry).
+In each Data File, the mode of data entry must be specified along
+with the dimensions of the matrix representing the parameter.
+Both are located in the very first line of each Data File.  The
+dimensions of the matrix must be delimited by brackets and
+separated (number of rows versus columns) by a colon.  If the
+parameter represented is a vector instead, the dimension may be
+represented as a single number without use of the colon.  The
+data that follow are read in sequence across the columns of the
+matrix and down the rows.  Comments, which are ignored by the
+data processing, can be added to each line by placing them to the
+right of a colon.  Equations used in the equation mode of data
+entry must be in the form of function of time, t or T (see
+Reference).  The following are examples of various formats that
+can be used for a Data File:
+
+1.   A Data File with 2x3 matrices to be read at each iteration,
+     with comments:
+
+     [2:3]  File
+     3.2  1.1  4.8
+     2.0  8.2  5.2E-2    : 0
+     3.1  1.1  5.0
+     2.5  8.4  5.2E-2    : 1
+     3.0  1.1  5.1
+     3.0  8.4  5.2E-2    : 2
+          .
+          .
+          .
+
+2.   A Data File with 2x3 constant matrix:
+
+     [2:3]  Constant
+     3.2  1.1  4.8
+     2.0  8.2  5.2E-2
+
+
+3.   A Data File with 2x2 equations matrix using semicolon
+     separators:
+
+     [2:2] Equation
+     k1 = 2*t+3;  k2 = cos (2*pi*t)
+     $1$1 = k1*k2;      $1$2 = k1+4
+     $2$1 = t ;          $2$2 = 3
+
+
+4.   A Data File with 2x2 equations matrix with separate lines:
+
+     [2:2] Equation
+     k1 = 2*t+3
+     k2 = cos (2*pi*t)
+     $1$1 = k1*k2
+     $1$2 = k1+4
+     $2$1 = t
+     $2$2 = 3
+
+
+5.   A Data File with 3x3 symmetric matrix (note that only the lower
+     triangular part is specified when the matrix is symmetric):
+
+     [3:3] Constant
+     3.2
+     2.0  8.2
+     7.9  2.5  0.5
+
+
+6.   A Data File with 4-tuple constant vector:
+
+     [3:1] Constant
+     3.2
+     2.0
+     7.9
+
+
+7.   A Data File with 4-tuple constant vector:
+
+     [3] Constant
+     3.2
+     2.0
+     7.9
+
+
+Starting Up:
+
+     To execute the main program, type "KALM" followed by a carriage
+return.  If executing from a directory not containing these
+programs, a directory path must be placed in front of the program
+name "KALM".  The first screen that appears is the cover screen.
+Following that, a series of menus will appear.  The commands that
+are solicited from the user will, for the most part, be obvious.
+Where one command is to be selected from a number of
+alternatives, the highlighted character describing that
+particular command should be entered from the keyboard in order
+to select it.
+
+Choosing Operating Modes:
+
+     After the brief appearance of the cover screen, which can be
+interrupted by hitting any key, the "Functions Menu" is presented
+for the user to select an operating mode and specify a parameter
+file name (see below).
+
+From this menu, either a program function can be selected by entering
+a number "1", "2", "3", "4", "5", "6", "7", "8", F1, F2 or F3
+according to the list (shown below), or a parameter file name may
+be specified.  If a parameter file containing names of the data
+files needed was created in a previous run and is needed for the
+current run, simply type the name of the parameter file from the
+keyboard.  When the full file name has been entered, complete the
+entry with a carriage return.  To aid the user with a list of
+available files, directory assistance should be consulted (see On-
+Line Directory Help.)  A program function can be selected without
+first specifying a parameter file name.  A selection can also be
+made with the name of a file that does not yet exist; a new
+parameter file will be created with that name.  If the parameter
+file chosen contains a valid operating mode, it will be displayed
+on the screen (see below).
+
+
+                KALM 'N SMOOTH - FUNCTIONS MENU
+ ________________________________________________________________
+  SELECT PROGRAM FUNCTION:
+
+  1. Kalman Filtering           |
+  2. Kalman Smoothing           |- Covariance Analysis
+  3. Suboptimal Analysis        |
+  4. Schmidt Filtering          |
+
+  5. Kalman Filtering           |
+  6. Kalman Smoothing           |- Monte Carlo Processing
+  7. Random Process Generation  |
+  8. Schmidt Filtering          |
+
+  F1. STM/Q Computations        |
+  F2. Steady-State Computations |- Miscellaneous Utilities
+  F3. N-LIES Analysis Program   |
+
+  NAME OF PARAMETER FILE:               MODE TYPE:
+
+  __________________________            xxxxxxxxxx
+
+
+  [ESC] To Exit Program    [ENTER] To Choose Selected Mode Type
+
+ ________________________________________________________________
+
+
+With a specified operating mode, a carriage return [ENTER] will
+confirm the choice of the operating mode.  Regardless, any one of
+the other operating modes can still be chosen to override the one
+shown.
+
+Parameter Menu:
+
+     The data entry menu that pops up upon the selection of a program
+function consists of several boxes, each allocated for a Kalman
+filter parameter that is needed for the chosen program function.
+The boxes in Areas A, B, C, D, E and F (see picture below) are
+reserved the entry of data file names corresponding to parameters
+required for the chosen program function.  As such, the number of
+boxes used for each program function will vary accordingly.  Each
+box will contain the name of the parameter it represents.
+
+               ____________________________
+              | ___________    ___________ |
+              ||_____A_____|  |_____B_____||
+              | ___________    ___________ |
+              ||_____C_____|  |_____D_____||
+              | ___________    ___________ |
+              ||_____E_____|  |_____F_____||
+              | ___________    ___________ |
+              ||_____G_____|  |_____H_____||
+              |----------------------------|
+              |_____________I______________|
+                     PARAMETERS MENU
+
+
+Each box can be chosen by using the cursor or arrow keys (left,
+right, up, or down) to move the highlighted box to the appropriate
+location.  When a box is highlighted, a data file name can be
+entered from the keyboard.  This entry from the keyboard is
+completed by a carriage return.  To obtain a reference to
+available file names, see On-Line Directory Help.  A carriage
+return made via the keyboard but is not entered by the user as
+part of a file name entry will invoke a screen-oriented data
+editor (see next section for Data Editor).  If the data file to
+be edited corresponds to a parameter which is a covariance
+matrix, a reminder will flash momentarily in the box accompanied
+by a beeping tone that the matrix (if the parameter is
+multidimensional) is symmetric (see Mode of Data Entry for
+special symmetric matrix format.)
+
+To quit the program from the top-level menu, the ESC key must be
+used.  To proceed from the Data File Manager after all data file
+names have been entered, Ctrl-Enter should be used.  The validity
+of the data files specified is verified, and the matrix
+dimensions of the Kalman parameters are checked for consistency.
+If any data file name entry is new or changed, the user will be
+asked if the parameter file needs to be saved or updated.  This
+prompt is made in Area I at the bottom of the screen (see
+picture above).  If everything is in order, the chosen
+processing program is then executed.  To exit the Parameters
+Menu and return to the top-level menu, simply use the Esc key.
+
+On-Line Directory Help:
+
+     On-line directory help is available at two areas of file name
+input - the Functions Menu and the Parameters Menu.  In either
+case, the on-line directory help is invoked by typing a string
+label that includes the wild card character (*), e.g. *.* or
+*.PRM.  The diretory list shows up in a window at the bottom of
+the screen.  The highlighted file name can be changed by using
+the arrow keys.  After the correct one is selected, it is
+selected by hitting the Enter key.
+
+Directory Help In The Functions Menu:
+
+     The list of files first shown when invoked belongs to the
+current directory from which the program KALM was executed.  If
+the file being sought resides in another directory, the current
+directory must be changed.  To do this, simply select the entry
+located at the end of the list marked "..\".  This changes the
+current directory to the parent directory (one level closer to
+the root directory).  For example, if C:\PROGS is originally the
+current directory, choosing "..\" changes it to C:\.
+
+Directory Help In The Paramters Menu:
+
+     The list of files first shown when invoked belongs to the
+current directory.  If the file being sought resides in another
+directory, the current directory must be changed.  To do this,
+simply select the entry located at the end of the list marked
+"..\".  Unlike the Functions Menu, this does not change the
+current directory but merely the directory list that is shown.
+If the file ultimately selected is from the current directory,
+only the file name will be annunciated (e.g. TRIAL.STM).
+However, if it is selected from a directory other than the
+current, the full path name for the file is also annunciatetd
+with its name (e.g. C:\PROGS\TRIAL.STM).
+
+Data Editor:
+
+     When the data editor is invoked, an entirely new screen will
+show up.  The data editor will create a new file with the specified
+name if that data file does not already exist.  Otherwise, the
+specified file is brought up on-screen to be edited.  The menu of
+commands for the data editor is given below.  Of these, the most
+notable command is "Save and Exit" which is accomplished by
+either Ctrl-K X or F2.  To abandon a file, or to quickly exit an
+untouched one, use Ctrl-K Q.
+
+
+     FUNCTION                 KEYSTROKES
+
+     Character left           Left arrow or Ctrl-S
+     Character right          Right arrow or Ctrl-D
+     Word left                Ctrl-Left arrow or Ctrl-A
+     Word right               Ctrl-Right arrow or Ctrl-F
+     Line up                  Up arrow or Ctrl-E
+     Line down                Down arrow or Ctrl-X
+     Scroll up                Ctrl-W
+     Scroll down              Ctrl-Z
+     Page up                  PgUp or Ctrl-R
+     Page down                PgDn or Ctrl-C
+     Beginning of file        Ctrl-PgUp or Ctrl-Q R
+     End of file              Ctrl-PgDn or Ctrl-Q C
+     Beginning of line        Home or Ctrl-Q S
+     End of line              End or Ctrl-Q D
+     Top of screen            Ctrl-Home or Ctrl-Q E
+     Bottom of screen         Ctrl-End or Ctrl-Q X
+     Go to line               Ctrl-J L
+     Go to column             Ctrl-J C
+     Top of block             Ctrl-Q B
+     Bottom of block          Ctrl-Q K
+     Jump to marker 0..9      Ctrl-Q 0..Ctrl-Q 9
+     Set marker 0..9          Ctrl-K 0..Ctrl-K 9
+     Previous cursor position Ctrl-Q P
+     New line                 Enter or Ctrl-M
+     Insert line              Ctrl-N
+     Insert control character Ctrl-P
+     Tab                      Tab or Ctrl-I
+     Delete current character Del or Ctrl-G
+     Delete character left    Backspace or Ctrl-H
+     Delete word              Ctrl-T
+     Delete to end of line    Ctrl-Q Y
+     Delete line              Ctrl-Y
+     Find pattern             Ctrl-Q F
+     Find and replace         Ctrl-Q A
+     Find next                Ctrl-L
+     Abandon file             Ctrl-K Q
+     Save and continue edit   Ctrl-K S
+     Save and exit to DOS     Ctrl-K X or F2
+     Save to file             Ctrl-K N
+     Add window               Ctrl-O A or Shift-F3
+     Next window              Ctrl-O N or F6
+     Previous window          Ctrl-O P or Shift-F6
+     Resize current window    Ctrl-O S
+     Begin block              Ctrl-K B or F7
+     End block                Ctrl-K K or F8
+     Copy block               Ctrl-K C
+     Move block               Ctrl-K V
+     Delete block             Ctrl-K Y
+     Hide block               Ctrl-K H
+     Mark current word as     Ctrl-K T
+       block
+     Read block from file     Ctrl-K R
+
+
+Data Files:
+
+     At the top-level menu, the program function is chosen to specify
+one of six available operating modes.  In the listings below, the
+parameters tagged with a {#} are output in nature.  For these, a
+file name will need to be specified even though a data file
+associated with that name may not actually yet exist.  Certain
+parameters tagged with a {*} are considered optional in their
+specification; if specified, the corresponding data files must be
+valid and correct.  Those parameters that are tagged with both
+symbols {#,*} are considered output optional.  If a data file
+name is specified, here again, the data file with that name need
+not actually yet exist.
+
+1. Covariance Analysis (for Kalman Filtering, Smoothing, and
+   Schmidt Filtering):
+
+        The difference between this mode and Monte Carlo Processing
+   mode described before is that no measurements are assimilated
+   here and hence no states are estimated.  The Kalman filter
+   only computes the error covariance matrix and parameters
+   associated with it.  The error covariance (P) is the output
+   optional parameter.  The data parameters requested in this
+   mode are:
+
+   (a)  State Transition Matrix (phi)
+   (b)  Process Noise Covariance (Q)
+   (c)  Measurement Connection (H)
+   (d)  Measurement Noise Covariance (R)
+   (e)  Error Covariance (P)  {#,*}
+   (f)  Initial Error Covariance (P0)
+
+2. Suboptimal Analysis:
+
+        A covariance-type analysis is implied here.  The data entry
+   configuration is the same as that for the Covariance Analysis
+   mode except for the addition of the Suboptimal Gain
+   parameter.  Note that if a data file of filter gains
+   generated by a previous Kalman filter run is used, it must
+   first be modified at the very first line of the data file
+   with the proper specification of the data entry mode and
+   dimensionality of the gain matrix.  This can be accomplished
+   using the data file editor utility provided in the N-LIES
+   package (discussed later).  The error covariance (P) is the
+   output optional parameter.  The data parameters requested in
+   this mode are:
+
+   (a)  State Transition Matrix (phi)
+   (b)  Process Noise Covariance (Q)
+   (c)  Measurement Connection (H)
+   (d)  Measurement Noise Covariance (R)
+   (e)  Error Covariance (P)  {#,*}
+   (f)  Initial Error Covariance (P0)
+   (g)  Suboptimal Gain (K)
+
+3. Monte Carlo Processing (for Kalman Filtering, Smoothing and
+   Schmidt Filtering):
+
+        In this program function, the Kalman filter processes noisy
+   measurement data to simulate a sample realization that may be
+   part of an ensemble of runs designed to determine the
+   statistics of the estimation process.  The state estimate (x)
+   is an optional output parameter while all the others are
+   required input parameters.  The data parameters requested in
+   this mode are:
+
+   (a)  State Transition Matrix (phi)
+   (b)  Process Noise Covariance (Q)
+   (c)  Measurement Connection (H)
+   (d)  Measurement Noise Covariance (R)
+   (e)  Initial State Estimate (x0)
+   (f)  Initial Error Covariance (P0)
+   (g)  Measurement Vector(s) (z)
+   (h)  State Estimate (x)  {#,*}
+
+4. Random Process Generation:
+
+        This is a non-Kalman filter mode but uses the same model
+   structure as that of a Kalman filter.  It generates Monte
+   Carlo data according to the specified state model.  The
+   measurement generated (z) is a required output parameter
+   while the state generated (x) is an optional output
+   parameter.  The initial state (x0) and the initial covariance
+   (P0) are optional input parameters.  The initial state and
+   initial covariance parameters define the mean and covariance
+   of the gaussian distribution upon which the randomized
+   initial state vector is based.  If either of the two
+   parameters is left unspecified, it is assumed to be zero.
+   Clearly, if P0 is defaulted to zero, the resulting state is
+   deterministic and set exactly to the value specified by x0.
+   And if both are unspecified, the initial state vector is
+   zero.  The data parameters requested for in this mode are:
+
+   (a)  State Transition Matrix (phi)
+   (b)  Process Noise Covariance (Q)
+   (c)  Measurement Connection (H)
+   (d)  Measurement Noise Covariance (R)
+   (e)  Initial State (x0)  {*}
+   (f)  Initial Covariance (P0)  {*}
+   (g)  Measurement Generated (z)  {#}
+   (h)  State Process Generated (x)  {#,*}
+
+5. Steady-State Computations:
+
+        The characteristic roots of the specified time-invariant
+   state model is computed here.  Another product of this
+   program function is the computation of the steady-state error
+   covariance matrix.  The parameters requested to specify the
+   state model are:
+
+   (a)  State Transition Matrix (phi)
+   (b)  Process Noise Covariance (Q)
+   (c)  Measurement Connection (H)
+   (d)  Measurement Noise Covariance (R)
+
+6. STM/Q Computations:
+
+        The state transition matrix and the process noise covariance
+   matrix are computed here from a continuous-time state model.
+   The finite-time increment needed for the conversion from a
+   continuous to a discrete-time model is also requested.  The
+   input parameters are:
+
+   (a)  State Coefficient Matrix (F)
+   (b) Noise Coefficient Matrix (G)
+
+
+Mode of Data Entry:
+
+For each of the operating modes described above, the data
+parameters listed must be specified.  The data entry can be
+accomplished in one of three ways:
+
+1. Constant:
+
+        The data for the parameter are read once at the start from a
+   file and then assumed constant for the remainder of the run.
+   The first line specifies the dimension of the matrix and the
+   "Constant" mode of data entry.  It should be in the format
+   "[xx:yy] Constant" where the matrix has xx rows and yy
+   columns.  In the subsequent lines, any two elements of the
+   data on the same line must be separated by a space.  Comments
+   placed to the right of a colon for a particular line are
+   ignored.  If the parameter is a covariance-type matrix, a
+   reminder message shows up before the editor is invoked that
+   the matrix to be entered is symmetric.  For symmetric
+   matrices, it is important that only the lower triangular
+   portion of the matrix be entered.  Otherwise, if not
+   followed, the sequence of data read by the program will be
+   incorrect.
+
+2. File:
+
+        The data for the parameter is read from the specified data
+   file once every iteration of the processing run.  The first
+   line specifies the dimension of the matrix and the "File"
+   mode of data entry.  It should be in the format "[xx:yy]
+   File" where the matrix has xx rows and yy columns.  In the
+   subsequent lines, as before, any two elements of the data on
+   the same line must be separated by a space.  Comments placed
+   to the right of a colon for a particular line are ignored.
+   For symmetric matrices, it is important that only the lower
+   triangular portion of the matrix be entered.
+
+3. Equation:
+
+        The data for the parameter are evaluated once every iteration
+   of the processing run from a set of equations that is read
+   once at the start from a file.  The algebraic description can
+   be broken up into several lines, each being no more than 80
+   characters long.  Each equation line must be assigned (=) to
+   a variable name.  Variable names beginning with the character
+   "$" are reserved for final assignments to the appropriate
+   matrix component.  For instance, the equation line
+
+                  $2$3 = cos (6*pi)
+
+   assigns the value cosine of 6 times pi to the component in the 2nd
+   row and 3rd column of that matrix.  To accommodate long equations
+   or equations with repetitive terms, intermediate assignments
+   to arbitrarily-defined variable names are also allowed.  For
+   example,
+
+                  temp1 = 6*pi
+                  $2$3 = cos (temp1)
+
+   Variable names may mix alpha with numeric characters but must
+   begin with an alpha as the first character.  Equation lines
+   are separated by being placed on different lines, or, if on
+   the same line, by a semi-colon (;).  The standard arithmetic
+   rules of priority in operation as well as the requirement of
+   matched pairs of parentheses will apply.  For a function that
+   carries an argument, the argument must be isolated within
+   parentheses, e.g. sqrt (3*t+1).  Values preceded by a sign
+   must also be isolated with parentheses unless the sign is the
+   first character of an equation.  The following are some
+   syntax examples:
+
+   Correct                   Incorrect
+
+   A3 = 5*(-t)               A3 = 5*-t
+   $1$3 = 14+(-36*t^(-2))    $1$3 = 14+ -36*t^-2
+   x_out = -cos (3*t)        x-out = -cos (3*t)
+
+
+   The mathematical functions available for the Equation mode of
+   data entry and their corresponding symbols are listed as
+   follows (uppercase characters are allowable):
+
+     FUNCTION            SYMBOL
+     addition            +
+     subtraction         -
+     multiplication      *
+     division            /
+     exponential         ^
+     modulus             mod
+     square              sqr
+     square-root         sqrt
+     absolute value      abs
+     integer             int
+     sine (radians)      sin
+     cosine (radians)    cos
+     tangent (radians)   tan
+     arcsine             asin
+     arccosine           acos
+     arctangent          atan
+     natural logarithm   ln
+     natural exponential exp
+     base-10 logarithm   log
+     pi                  pi
+
+
+Data Processing Screen:
+
+     A new screen appears when the data processing program is invoked.
+In all, there are five general areas where output information is
+displayed.  Of the five areas, three can be reconfigured by the
+user while the other two cannot (see figure).  The latter consist
+of a partitioned area (A) at the top of the screen depicting
+cycle/time information, and an "information bar" (E) at the very
+bottom of the screen.  The remaining three (B, C and D) show
+updated information on the Kalman filter state and covariance.
+The current information window is highlighted and the cursor keys
+(left, right, or down) can be used to get to access the areas B, C
+and D respectively.  The five areas are described below in detail.
+
+
+                 ______________________________
+                |              A               |
+                |______________________________|
+                |                   |          |
+                |         B         |     C    |
+                |                   |          |
+                |___________________|__________|
+                |              D               |
+                |______________________________|
+                |______________E_______________|
+
+                        SCREEN PARTITIONS
+
+
+A.  Header Area:
+
+The information displayed in the Header Area panel of this screen
+includes the following:
+
+1. RUNNING STEP# -  The iteration step number that starts at
+   zero and is incremented by one at the end of each iteration;
+
+2. DISPLAY STEP# -  The iteration step at which the information
+   being displayed in Areas B, C and D and to any open output
+   files was last updated;
+
+3. DISPLAY REFRESH RATE -  The display refresh rate at which the
+   information displayed in Areas B, C and D are updated, in
+   terms of iteration step (also determines the sampling rate in
+   the data output files);
+
+4. INTERRUPT AT STEP# -  The target iteration step to interrupt
+   the processing on.  If it is not shown in the Header Area
+   display, then no target iteration has been set.  This
+   parameter can be set or changed from Control Area E.  When
+   the processing is interrupted at the specified step, a prompt
+   will appear in Area D:
+
+
+               **  Run Interrupted  **
+                   Continue? [Y/N]
+
+
+If "Y"(es) is chosen, the program will continue but pauses
+immediately after, to allow the user the choice of resetting the
+next Iteration Step to interrupt on.  If "N"(o) is chosen
+instead, the program reverts back to the Data File Manager menu.
+
+B.  Filter State, Variance, and Gain Information Area:
+
+In this Information Area, there are four columns of information:
+
+  1. The index of the state variable in the state vector;
+  2. A priori (prior) or a posteriori (updated) or smoothed
+     states if applicable (applies to Monte Carlo Processing
+     only);
+  3. A priori (prior) or a posteriori (updated) or smoothed
+     variances if applicable;
+  4. Filter gains;
+
+
+A menu bar at the bottom of the window allows the user to
+configure the display in this area (if the measurement situation
+is nonscalar, then there are filter gain vectors for each of the
+components in the measurement vector):
+
+  P -  a priori (prior) information
+  U -  a posteriori (updated) information
+  S -  smoothed information (for smoothing functions)
+  < -  decrements the index of the measurement vector
+  > -  increments the index of the measurement vector
+
+C.  Miscellaneous Information Area:
+
+The information in this area are displayed in two columns, the
+first of which is the index of the matrix or vector data that is
+shown in the second.  The data shown can be selected from the
+following:
+
+  (E)rror Covariance -  off-diagonal terms of the error covariance matrix;
+  (R)esiduals -  measurement residuals vector;
+  Residual (V)ariance -  variance of the residuals vector;
+  Residual (C)ovariance -  covariances of the residuals vector;
+
+D.  Control Area:
+
+There are four changeable parameters to configure the display
+window or the Kalman filter.  For each, there are several
+suboptions to choose from.  All available options to change are
+listed (suboptions are indented):
+
+  (D)isplay Parameters
+    (R)efresh Rate
+    (I)nterrupt Point
+
+  (F)ilter Parameters
+    phi (enter "f" or "F") for the state transition matrix
+    w for the process noise covariance matrix
+    H for the measurement matrix
+    v for the measurement noise covariance matrix
+
+  (O)utput Files List
+    1.  a priori est.
+    2.  updated est.
+    3.  kalman gain
+    4.  a priori error cov.
+    5.  updated error cov.
+    6.  measurement residual
+    7.  residual covariance
+
+  (S)ingle Step Toggle -  turns on the single-step mode.
+
+E.  Status Bar:
+
+When the processing is in pause, the message "[ESC] to Resume" is
+displayed at the bottom left hand corner of the screen.  When the
+processing is in progress, the message "[F1] to Interrupt" will
+appear instead in place of the previous one.  The SINGLE STEP
+message appears on the bottom right hand corner of the screen
+when the single-step mode is invoked.  When the processing is
+paused after the first iteration, a message appears at the center
+of the Status Bar to indicated that Area B or Area C can be accessed
+to change what is displayed, or Area D accessed to change parameter
+settings.
+
+If there are more than 11 elements of the matrix or vector
+displayed in either Area B or Area C, then only 11 will be shown.
+To see the rest, a message appears at the bottom of the screen
+instructing the user to tap the SPACE BAR in order to scroll
+through the rest of the elements.
+
+Data Processing (Utility Functions):
+
+Steady-State Computations:
+
+    In this mode, the following menu below appears.  The OUTPUT
+options do not show up at the onset until the appropriate
+computations have been carried out whereupon the corresponding
+output data is then available.
+
+  COMPUTE
+    (E)rror Covariance (Steady State)
+    (K)alman Gain (Steady State)
+    (R)oots of the Kalman Filter
+
+  OUTPUT
+    A. Computed Error Covariance
+    B. Computed Kalman Gain
+    C. Computed Kalman Filter Roots
+
+  (Q)UIT
+
+
+STM/Q Computations:
+
+     In this mode, the time increment between successive iterations
+must be specified with the following prompt:
+
+  TIME INCREMENT (in seconds) ?
+
+
+Then the following menu below appears.  Here also, the SAVE
+options do not show up at the onset until the appropriate
+computations have been carried out whereupon the corresponding
+output data is then available.
+
+  COMPUTE
+    (S)tate Transition Matrix
+    (P)rocess Noise Covariance
+
+  SAVE
+    A. State Transition Matrix
+    B. Process Noise Covariance Matrix
+
+  (Q)UIT
+
+
+N-LIES
+
+A program that can be used for analysis and graphing is also
+included with the software package under the executable file name
+N-LIES.  This program provides a Discrete Fourier Transform (or
+its corresponding inverse) and an Autocorrelation Function to
+process data that is input via a text data file.  The results can
+be displayed on the screen.  An additional function to graph or
+edit the data file itself is also included.
+
+Starting Up:
+
+     To directly execute the program, type "N-LIES" followed by a
+carriage return.  If executing from a directory not containing
+the program, a directory path must precede the program name "N-
+LIES".  The first screen that appears is the cover screen.  If N-
+LIES is executed from KALM, no cover screen will appear.
+Following that, a series of menus will appear.  The commands that
+are solicited from the user will, for the most part, be obvious.
+Where one command is to be selected from a number of
+alternatives, the highlighted characted describing that
+particular command should be entered from the keyboard in order
+to select it.
+
+Choosing Program Function:
+
+     After a brief appearance of the cover screen, a top-level menu
+is presented for the user to specify a data file name and to select
+a program function:
+
+
+  SELECT PROGRAM FUNCTION:
+
+  1. Discrete Fourier Transform
+  2. Inverse Discrete Fourier Transform
+  3. Autocorrelation Function
+
+  4. Graphing Data
+  5. Edit Data File
+  6. Data Extraction
+
+
+  NAME OF INPUT DATA FILE:
+
+  ___________________________
+
+
+  [ESC] To Exit Program
+
+
+In this menu, either a program function can be selected by
+entering number "1", "2", "3", "4", "5", or "6", or a data file
+name may be typed from the keyboard (see On-Line Directory Help).
+When the full file name has been entered, complete the entry with
+a carriage return.  A program function cannot be selected without
+first a specifying a data file name.  If the selection is done
+with the name of a data file that does not exist, the name will
+be erased from the screen to indicate to the user that it is not
+a valid choice.
+
+Initializing the Data File:
+
+     If any of the functions other than #5 is chosen above with a
+proper file name, a sample of the data file will be displayed in
+an upper window of the screen while the following series of
+prompts will show up in the lower window requesting the
+appropriate user response via the keyboard:
+
+     Number Of Lines To Skip (Hit [ENTER] if none)?
+     Number Of Lines To Read (Hit [ENTER] for all)?
+     Number Of Lines To Periodically Jump (Hit [ENTER] if none)?
+     Hit [ENTER] to read data or [R] to read square root of data
+
+
+This allows the data file to be "sampled" in the sense of
+extracting lines of data at a specified frequency.  Consider, for
+example, the following symmetric 2x2 matrix:
+
+1.432 :[1][1]  0
+3.212 :[1][2]  0
+0.231 :[2][2]  0
+1.400 :[1][1]  1
+2.988 :[1][2]  1
+0.100 :[2][2]  1
+1.402 :[1][1]  2
+2.554 :[1][2]  2
+0.002 :[2][2]  2
+    .
+    .
+
+
+For instance, in order to read only the 2,2-term of the
+covariance matrix, every third line of the above example data
+file should be sampled starting with the third line.  The
+appropriate response in this case would be to "skip" 2 lines,
+"read" all lines, and "periodically jump" 2 lines.  The last
+option allows the user to read the data in as a square root
+function of the original data in the file.  This provides a means
+to plot the variance data as a graph of standard deviation.
+
+
+1.  Discrete Fourier Transform
+
+When the Discrete Fourier Transform program function is chosen
+and after the data file is initialized, the following series of
+prompts will appear:
+
+  There are xx columns of data
+
+  Enter column # for data samples [real]-
+  Enter column # for data samples [imaginary]-
+  < Hit [ENTER] to ignore >
+
+  Total number of samples to evaluate [xxx]?
+  Output File Name (Hit [ENTER] if none)-
+
+  CHOOSE ONE
+    [ENTER] to view Discrete Fourier Transform
+    [CTRL-ENTER] to output graph to printer
+    [ESC] to exit from program
+
+
+The input data can be complex numbers.  If so, these numbers must
+be generated in the rectangular form with the real and imaginary
+components placed in separate columns.
+
+
+2.  Inverse Discrete Fourier Transform
+
+The Inverse Discrete Fourier Transform program function prompts a
+series of questions that are identical to that for the Discrete
+Fourier Transform given in the foregoing discussion.
+
+
+3.  Autocorrelation Function
+
+When the Autocorrelation Function program function is chosen and
+after the data file is initialized, the following series of
+prompts will appear:
+
+  There are xx columns of data
+
+  Enter column # for data samples-
+  Enter column # for Time Mark-
+  < Hit [ENTER] for Auto Time Mark >
+
+  Total number of samples to evaluate [xxx]?
+  Output File Name (Hit [ENTER] if none)-
+  Total Number of Lags to be computed (<xx) -
+
+  CHOOSE ONE
+    [ENTER] to view Autocorrelation Function
+    [CTRL-ENTER] to output graph to printer
+    [ESC] to exit from program
+
+
+If the Time Mark is not associated with any data column, the
+indexing for the Time Mark is automatically generated.
+
+
+4.  Graphing Data
+
+On choosing this program function and after the data file is
+initialized, the following menu for the graphing program function
+appears:
+
+CHOOSE ONE - FILE #1
+
+  (T)ime Mark (column 0)
+  Plot (A)  (column 0)
+  Plot (B) (column 0)
+  Plot (C) (column 0)
+  (X)-axis (Auto Scaling)
+  (Y)-axis (Auto Scaling)
+  (F)ormat (Lines)
+  (L)abels
+  [ENTER] to view graph
+  [CTRL-ENTER] to print
+  [v] to set up File #2
+  [ESC] to exit program
+
+
+This program function allows the user to generate several
+overlaying plots of the X-Y type.  Up to four separate data files
+may be opened for data input.  On-line directory help is
+available.  The first file is already specified at the top-level
+menu.  Then, using the down arrow allows the user to open up a second
+file.  At this point when in the File #2 menu, the up arrow brings back
+the preceding File #1 menu.  To open a third file, the menu for File
+#2 must be showing (use the down arrow to get from the menu of File #1
+to that of File #2.)  Then, down arrow automatically opens the new file
+with a request of the file name.  This can be repeated for a
+fourth data file.  Each file is allotted one independent variable
+(Time Mark), and three dependent variables (A, B, and C).
+Therefore, up to three plots can be specified for each data file.
+Note here that if a data file contains more than three sets of
+data to be plotted, it can be respecified as a second data file
+with the same name to obtain space for three more plots.  To
+generate a plot, the column in the current data file to be
+plotted must be properly identified where at least one of the
+dependent variables must be associated with a data column.  If
+the Time Mark is not associated with any data column, it is
+assumed to be automatically generated (auto-forward).  In other
+words, an incrementing index is automatically associated with
+each data point in the associated data column.  To select an
+automatically decrementing index, select a value of -1 fo rthe
+Time Mark (auto-reverse).  This is useful for viewing output
+files generated by smoothing functions.  Other graphing functions
+that are available on the menu are the scaling (manual or
+automatic) of the axes, pasting labels on the graph, and the
+format of the graph, whether lines only, symbols only, or both
+lines and symbols.
+
+
+5.  Edit Data File
+
+The input data file can be edited using a screen-oriented editor
+by choosing this program function.  The file specified can either
+be an existing or a new one.  The menu of commands are given in a
+table in the Data Editor section.  This editor can also be used
+to install the appropriate printer and printing configurations in
+the file PRINTER.CFG.  See the section Printer Configurations for
+instructions on how to do so.
+
+
+6.  Data Extraction
+
+When this program function is chosen and the data file is
+initialized, the following prompt will appear:
+
+  Output File Name -
+
+
+The "extracted" file specified by the responses to the prompts
+when the data file was first read in will be stored under the
+above output file name.
+
+
+Printer Configurations:
+
+The ASCII text file PRINTER.CFG contains the user-defined
+parameters for setting up the desirable printer and printing
+configurations.  It consists of only three lines, an example of
+which is given as follows:
+
+     EpsonFX
+     Medium Resolution
+     Landscape
+
+
+The entries may be made up of a mix of upper and lower case
+characters.  The first parameter specifies the type of printer
+used.  The options available for this parameter are listed as
+follows:
+
+      1.Epson9
+      2.EpsonMX
+      3.EpsonRX
+      4.EpsonFX
+      5.EpsonLX
+      6.EpsonLQ
+      7.IBMPro
+      8.IBMQuiet
+      9.NEC24
+     10.Toshiba24
+     11.HPLaserJet
+     12.HPDeskJet
+
+
+The second parameter specifies the resolution of the printing
+mode.  The options available for this parameter are:
+
+     1.Low Resolution
+     2.Medium Resolution
+     3.High Resolution
+
+
+The third parameter specifies the orientation of the printed
+output.  The options available for this parameters are:
+
+     1.Landscape
+     2.Portrait
+
+

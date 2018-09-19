@@ -1,0 +1,78 @@
+
+comment =
+
+1st row is Q1; 2nd row is Q2; columns are for dt=5, 50, & 500. Comparison is for Q(1,1) terms.  Press ENTER to continue.
+
+
+Q11TERMS =
+
+  1.0e+007 *
+
+   0.00000416666667   0.00416666666667   4.16666666666667
+   0.00000416663462   0.00416346271225   3.85764685356787
+
+
+comment =
+
+1st row is Q1; 2nd row is Q2; columns are for dt=5, 50, & 500. Comparison is for Q(2,2) terms.  Press ENTER to continue.
+
+
+Q22TERMS =
+
+  1.0e+002 *
+
+   0.05000000000000   0.50000000000000   5.00000000000000
+   0.04999935897929   0.49935946727514   4.40651586868435
+
+
+comment =
+
+1st row is Q1; 2nd row is Q2; columns are for dt=5, 50, & 500. Comparison is for Q(3,3) terms.  Press ENTER to complete prob.
+
+
+Q33TERMS =
+
+  1.0e-005 *
+
+   0.00000010268568   0.00010268568241   0.10268568241208
+   0.00000010268489   0.00010260672235   0.09507002391915
+
+
+comment =
+
+1st row is Q1; 2nd row is Q2; columns are for dt=5, 50, & 500. Comparison is for Q(1,1) terms.  Press ENTER to continue.
+
+
+Q11TERMS =
+
+  1.0e+007 *
+
+   0.00000416666667   0.00416666666667   4.16666666666667
+   0.00000416663462   0.00416346271225   3.85764685356787
+
+
+comment =
+
+1st row is Q1; 2nd row is Q2; columns are for dt=5, 50, & 500. Comparison is for Q(2,2) terms.  Press ENTER to continue.
+
+
+Q22TERMS =
+
+  1.0e+002 *
+
+   0.05000000000000   0.50000000000000   5.00000000000000
+   0.04999935897929   0.49935946727514   4.40651586868435
+
+
+comment =
+
+1st row is Q1; 2nd row is Q2; columns are for dt=5, 50, & 500. Comparison is for Q(3,3) terms.  Press ENTER to complete prob.
+
+
+Q33TERMS =
+
+  1.0e-005 *
+
+   0.00000010268568   0.00010268568241   0.10268568241208
+   0.00000010268489   0.00010260672235   0.09507002391915
+

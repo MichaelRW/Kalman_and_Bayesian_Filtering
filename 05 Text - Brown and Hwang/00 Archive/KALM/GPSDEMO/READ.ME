@@ -1,0 +1,46 @@
+                    DEMO EXAMPLE: 5-STATE GPS MODEL
+                    -------------------------------
+
+A set of data files are included in the diskette and collectively placed in
+the subdirectory \GPSDEMO.  If copied over onto your hard disk, these files
+should be placed in a separate subdirectory from your processing programs
+(we shall assume for simplicity of explanation that it is also called
+\GPSDEMO). There are six files provided: GPS.STM, GPS.Q, GPS.H, GPS.R,
+GPS.P0, and the parameter file, GPS.PRM.
+
+Start out by setting the default drive or directory to the location of these
+data files (i.e. \GPSDEMO).  Then execute the program KALM making sure that
+the proper pathname is specified in its prefix (e.g. \PROGS\KALM).  The KALM
+program begins execution by enunciating its full title "KALM n' SMOOTH".
+The cover screen sequence can be interrupted by hitting any key.  Then a
+functions menu appears with a choice of nine different program function.
+At the lower left is an empty box to type in a parameter file name.  Go
+ahead and type GPS.PRM (case insensitive) completing the entry with [ENTER]
+via the keyboard.  Since it is able to find the parameter file specified,
+the program KALM proceeds to read its contents and declare that it is in
+the COVARIANCE mode.  Unless we want to change modes, we simply enter [ENTER]
+from the keyboard to proceed to the next level of data entry.  Here the
+little boxes of the parameters menu will already contain the appropriate
+file names for each filter parameter.  (That information was collectively
+retrieved from the parameter file.)
+
+To execute the Kalman filter (now in the Kalman Filter Covariance Analysis
+mode), enter [CTRL-ENTER] to invoke the next level.  You are now at the
+starting point of the Kalman filter process.  Hit the [ESC] key to let it
+execute.  When it reaches its 50th step, the program pauses and asks if you
+would like to continue.  Pressing the "n" key and confirming the termination
+with the "y" key terminates the Kalman filter and the program reverts to the
+parameters menu.  Hitting the [ESC] key takes the program back to the
+functions menu.  Finally, the program can be exited by hitting the [ESC]
+key one last time.
+
+This demo is intended to show how easy it is to obtain covariance analysis
+results using KALM n' SMOOTH.  Of course, the parameter files in this case
+were already up for your convenience.  You are now ready to go to the User's
+Guide and learn more about using the various programs provided in this
+software package.  You will find the User's Guide in Appendix C of the
+accompanying text, INTRODUCTION TO RANDOM SIGNALS AND APPLIED KALMAN
+FILTERING.  After reading the User's Guide you may find it useful to refer
+back to this demo occasionally.  This demo provides a good reference model
+for exploring many of the other program features that were not exercised.
+
