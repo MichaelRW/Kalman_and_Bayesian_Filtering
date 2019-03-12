@@ -4,9 +4,11 @@
 
 %Bayesian Ninja tracking Quail using kalman filter
 
-clear all
+close all; clear, clc
+
+
 %% define our meta-variables (i.e. how long and often we will sample)
-duration = 10  %how long the Quail flies
+duration = 10;  %how long the Quail flies
 dt = .1;  %The Ninja continuously looks for the birdy,
 %but we'll assume he's just repeatedly sampling over time at a fixed interval
 
@@ -38,6 +40,8 @@ Q_loc_meas = []; % Quail path that the Ninja sees
 figure(2);clf
 figure(1);clf
 for t = 0 : dt: duration
+    
+    fprintf(1, '\nTime value (seconds): %4.2f', t);
 
     % Generate the Quail flight
     QuailAccel_noise = QuailAccel_noise_mag * [(dt^2/2)*randn; dt*randn];
@@ -53,7 +57,7 @@ for t = 0 : dt: duration
     plot(0:dt:t, Q_loc_meas, '-k.')
     axis([0 10 -30 80])
     hold on
-    pause
+%     pause
 end
 
 %plot theoretical path of ninja that doesn't use kalman
@@ -136,5 +140,7 @@ clf
     ylim=get(gca,'ylim');
     line([Q_loc(T);Q_loc(T)],ylim.','linewidth',2,'color','b');
     legend('state predicted','measurement','state estimate','actual Quail position')
-    pause
+%     pause
 end
+
+
