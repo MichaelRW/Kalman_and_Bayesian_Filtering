@@ -9,7 +9,7 @@
 
 figure(1);clf;
 figure(2);clf;
-N = 100
+N = 1e3;
 s=[3;5];  % where the quail is hiding
 
 %quail squawks N times, and for each squawk, the ninja hears the quail at
@@ -26,15 +26,13 @@ figure(1);
 
 %make the plot prettier
 h=plot(s(1),s(2),'r.');  % Plot where the quail actually is
-set(h,'markersize',40,'
-linewidth',3); % make pretty
+set(h,'markersize',40, 'linewidth',3); % make pretty
 axis([0,10,0,10]);  % make pretty
 hold off;
 hold on
 for i=1:N
     x(:,i)=s+n(:,i);
     plot(x(1,i),x(2,i),'k.','markersize',10);
-    pause
 end;
 
 
@@ -106,7 +104,7 @@ for (n=2:length(x));
     sest=[Sa(a);Sb(b)];  %A store the coordinates of this location in the bushes
     subplot(211);plot(n,sest(1),'k.');axis([0 N 2 4 ])
     subplot(212); plot(n,sest(2),'k.');axis([0 N 4 6 ])
-    pause
+%     pause
 end;  
 subplot(211); hold off;
 subplot(212); hold off;
