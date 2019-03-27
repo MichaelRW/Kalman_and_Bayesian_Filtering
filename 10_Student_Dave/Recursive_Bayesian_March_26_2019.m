@@ -1,37 +1,49 @@
-% written by StudentDave
-%for licensing and usage questions
-%email scienceguy5000 at gmail. com
-
-%recursive bayesian estimation example:
-%adapted from Michael A. Goodrich
-%3 Sept 2004, CS 470
 
 
-figure(1);clf;
-figure(2);clf;
-N = 1e3;
-s=[3;5];  % where the quail is hiding
+%% Acknowledgements
 
-%quail squawks N times, and for each squawk, the ninja hears the quail at
-%some location. The error in estimation of where the qual is will be
-%defined as gaussian around where the quail actually is with a standard
-%deviation of 2.
+% Written by:  StudentDave
+%
+% For licensing and usage questions e-mail:  scienceguy5000 at gmail. com
 
-n=2*randn(2,N); % Create vector of iterative squawks with a standard deviation of 2.
-x=zeros(2,N); % x will be the initialized variable for where the ninja thinks he hears the quail.
+% Recursive Bayesian estimation example adapted from Michael A. Goodrich - September 3, 2004 - CS 470
+
+
+
+%% Environment
+
+close all; clear; clc;
+set(0, 'DefaultFigureWindowStyle', 'normal');
+
+h1=figure(1); h2=figure(2);
+
+
+
+%% Simulation Parameters
+
+numberOfHeardSquaks=1e2;
+quailLocation=[ 3; 5 ];
+
+% The hidden quail squawks "numberOfHeardSquaks".  For each squawk the ninja hears the quail
+% at some random location.  The error between where this spot is and the physical location of the
+% quail will be defined as Gaussian centered at the quail's location.  The standard deviation of this
+% 2-dimensional Gaussion distribution is 2 in both dimensions.
+
+n=2*randn(2,numberOfHeardSquaks); % Create vector of iterative squawks with a standard deviation of 2.
+x=zeros(2,numberOfHeardSquaks); % x will be the initialized variable for where the ninja thinks he hears the quail.
 
 %center the gaussian random swarks around the point where the quail
 %actually is. and plot
 figure(1);
 
 %make the plot prettier
-h=plot(s(1),s(2),'r.');  % Plot where the quail actually is
+h=plot(quailLocation(1),quailLocation(2),'r.');  % Plot where the quail actually is
 set(h,'markersize',40, 'linewidth',3); % make pretty
 axis([0,10,0,10]);  % make pretty
 hold off;
 hold on
-for i=1:N
-    x(:,i)=s+n(:,i);
+for i=1:numberOfHeardSquaks
+    x(:,i)=quailLocation+n(:,i);
     plot(x(1,i),x(2,i),'k.','markersize',10);
 end;
 
@@ -78,9 +90,9 @@ clf
 figure(2);
 clf
 subplot(211); plot(1,sest(1)); hold on;
-line([1,N],[s(1),s(1)]); % Draw a line at the location of the x dimension.
+line([1,numberOfHeardSquaks],[quailLocation(1),quailLocation(1)]); % Draw a line at the location of the x dimension.
 subplot(212); plot(1,sest(2)); hold on;
-line([1,N],[s(2),s(2)]); % Draw a line at the location of the y dimension.
+line([1,numberOfHeardSquaks],[quailLocation(2),quailLocation(2)]); % Draw a line at the location of the y dimension.
 
 K=[4,0;0,4]; % covariance matrix for making a 2-D gaussian
 for (n=2:length(x));
@@ -102,8 +114,8 @@ for (n=2:length(x));
     figure(2);
     [a,b]=find(Po==max(max(Po)));  % Get the peak value; it's most likely location of the Quail.
     sest=[Sa(a);Sb(b)];  %A store the coordinates of this location in the bushes
-    subplot(211);plot(n,sest(1),'k.');axis([0 N 2 4 ])
-    subplot(212); plot(n,sest(2),'k.');axis([0 N 4 6 ])
+    subplot(211);plot(n,sest(1),'k.');axis([0 numberOfHeardSquaks 2 4 ])
+    subplot(212); plot(n,sest(2),'k.');axis([0 numberOfHeardSquaks 4 6 ])
 %     pause
 end;  
 subplot(211); hold off;
