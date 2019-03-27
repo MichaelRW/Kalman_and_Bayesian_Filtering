@@ -19,7 +19,7 @@ addpath(genpath('.'), '-begin');
 
 h1=figure('Name', 'Quail and Apparent Squawk Locations');
 h2=figure('Name', 'Posterior PMF');
-h3=figure(3);
+h3=figure('Name', 'Position Updates');
     autoArrangeFigures();
 
 
@@ -35,7 +35,7 @@ quailLocation=[ 5; 5 ];
 % The standard deviation of the 2-dimensional Gaussion distribution is 2 in both dimensions.
 
 n=2*randn(2, numberOfHeardSquawks);  % 2-dimensional Gaussian squawk distribution.
-x=zeros(2, numberOfHeardSquawks);  % Apparent location of the quail (i.e. the source of the squawk).
+apparentQuailLocations=zeros(2, numberOfHeardSquawks);  % Apparent location of the quail (i.e. the source of the squawk).
 
 
 
@@ -43,30 +43,55 @@ x=zeros(2, numberOfHeardSquawks);  % Apparent location of the quail (i.e. the so
 
 figure(h1); ...
     plot( quailLocation(1), quailLocation(2), 'r.', 'MarkerSize', 40, 'LineWidth', 3 );  % Location of quail.
-    hold on; for i=1:numberOfHeardSquawks; x(:, i)=quailLocation + n(:, i); plot(x(1, i), x(2, i), 'k.', 'markersize', 10); end;
+    hold on; for i=1:numberOfHeardSquawks; apparentQuailLocations(:, i)=quailLocation + n(:, i); plot(apparentQuailLocations(1, i), apparentQuailLocations(2, i), 'k.', 'markersize', 10); end;
     axis( [-5, 15, -5, 15] ); daspect([1 1 1]); grid on; legend('Location of Quail', 'Apparent Squawk Locations');
     
     
     
-%% Bayesian Analysis
+%% Set Quail Locations, Prior and Posterior PMFs.
 
 xLocations=4:0.05:6; yLocations=xLocations;  % Define the locations, or states, where the quail can potentially be located.
 
 % Set the prior knowledge about the quail's location.
-PRIOR_KNOWLEDGE=1;
+PRIOR_KNOWLEDGE=3;
 
 switch PRIOR_KNOWLEDGE
     case 1
         % No bias, no prior knowledge, and uniform distribution.
-        L=length(xLocations); priorStateKnowledge=ones(L, L); posteriorStateKnowledge=ones(L, L);
+        L=length(xLocations); priorStateKnowledge=ones(L); posteriorStateKnowledge=ones(L);
+        
     case 2
         % Bias the prior towards the quail's location.
-        centered_prior=[4, 4];
-            priorStateKnowledge=centered_prior; posteriorStateKnowledge=centered_prior;
+        %
+        % Generated Gaussian distribution centered at given point.
+        %
+        centered_prior=zeros(size(xLocations, 2), size(yLocations, 2));
+        
+        for xIndex=1:1:numel(xLocations)            
+            for yIndex=1:1:numel(yLocations)
+                centered_prior(xIndex, yIndex)=exp( -1/2 .* ([xLocations(xIndex); yLocations(yIndex)] - [5; 5]).' * ( [0.05 0; 0 0.05] \ ([xLocations(xIndex); yLocations(yIndex)] - [5; 5]) ) ) / ...
+                    sqrt( (2*pi)^2 * det([0.05 0; 0 0.05]) );
+            end            
+        end
+        
+        priorStateKnowledge=centered_prior; posteriorStateKnowledge=centered_prior;
+            
     case 3
         % Bias the prior away from the quail's location.
-        off_centered_prior=[0, 0];
-            priorStateKnowledge=off_centered_prior; posteriorStateKnowledge=off_centered_prior;
+        %
+        % Generated Gaussian distribution centered at given point.
+        %
+        offCentered_prior=zeros(size(xLocations, 2), size(yLocations, 2));
+        
+        for xIndex=1:1:numel(xLocations)            
+            for yIndex=1:1:numel(yLocations)
+                offCentered_prior(xIndex, yIndex)=exp( -1/2 .* ([xLocations(xIndex); yLocations(yIndex)] - [4; 4]).' * ( [0.05 0; 0 0.05] \ ([xLocations(xIndex); yLocations(yIndex)] - [4; 4]) ) ) / ...
+                    sqrt( (2*pi)^2 * det([0.05 0; 0 0.05]) );
+            end            
+        end
+        
+        priorStateKnowledge=offCentered_prior; posteriorStateKnowledge=offCentered_prior;
+                    
     otherwise
         error( '*** Invalid prior knowledge CASE index. ***' );
 end;
@@ -76,50 +101,93 @@ end;
 priorStateKnowledge=priorStateKnowledge / sum(priorStateKnowledge(:));
 posteriorStateKnowledge=posteriorStateKnowledge / sum(posteriorStateKnowledge(:));
 
-% Display the posterior knowledge matrix;
-figure(h2); clf; mesh(posteriorStateKnowledge); xticklabels(4:0.5:6); colorbar; axis([0 40 0 40 0 0.015]); daspect([1 1 1]);
-
-return;
+% figure; mesh(priorStateKnowledge); shg;
+% figure; mesh(posteriorStateKnowledge); shg; return;
 
 
+% Display the posterior knowledge matrix (see SWITCH argument above).
+figure(h2); clf; ...
+    mesh(posteriorStateKnowledge); colorbar; ...
+    xticklabels(4:0.5:6); yticklabels(4:0.5:6); 
+    axis([0 40 0 40 0 0.05]); ...
+    xlabel('X'); ylabel('Y'); zlabel('Probability');
 
 
-%%iterative bayes
 
-[a,b]=find(posteriorStateKnowledge==max(max(posteriorStateKnowledge)));  % Pull out the indices at which posteriorStateKnowledge achieves its max to start.
-sest=[xLocations(a);yLocations(b)];  % The best estimate of the true state to start.
-figure(h1);
-clf
-figure(h2);
-clf
-subplot(211); plot(1,sest(1)); hold on;
-line([1,numberOfHeardSquawks],[quailLocation(1),quailLocation(1)]); % Draw a line at the location of the x dimension.
-subplot(212); plot(1,sest(2)); hold on;
-line([1,numberOfHeardSquawks],[quailLocation(2),quailLocation(2)]); % Draw a line at the location of the y dimension.
+%% Iterative Bayes Computations
 
-K=[4,0;0,4]; % covariance matrix for making a 2-D gaussian
-for (n=2:length(x));
-    priorStateKnowledge=posteriorStateKnowledge; %store the posterior to the prior.
-    m=0*priorStateKnowledge;   
-    %likelihood
-    % look at each location, assume that the given location is
-    % is there quail is, and get the likelihood of the data x(:,n) assuming
-    % 2-d gaussian noise
-    for (i=1:length(priorStateKnowledge))
-       for (j=1:length(priorStateKnowledge))
-           me=[xLocations(i); yLocations(j)];
-           m(i,j) = 1/sqrt((2*pi)^2*det(K)) * exp(-(x(:,n)-me)'*inv(K)*(x(:,n)-me)/2); %Compute likelihood           
-           m(i,j) = m(i,j) * priorStateKnowledge(i,j); % Combine this likelihood with the prior   
-       end;
+% Find indices where the posteriorStateKnowledge has its maximum value.
+[maximumX_posteriorPMF_index, maximumY_posteriorPMF_index]=find( posteriorStateKnowledge==max(posteriorStateKnowledge(:)) );
+%
+% Note:  With the three cases above, the maximum x and y PMF value indices will be,
+%   Case 1 - With a uniform posterior PMF (i.e. from the prior PMF) there will not be an optimal state value.
+%   Case 2 - A Gaussian posterior PMF with a maximum value near the quail's position.
+%   Case 3 - A Gaussion posterior PMF with a maximum value offset from the quail's position.
+
+stateEstimate=[ xLocations(maximumX_posteriorPMF_index); yLocations(maximumY_posteriorPMF_index) ];
+
+figure(h3); ...
+    subplot(2,1,1); ...
+        plot(1, stateEstimate(1)); hold on;
+        line([1, numberOfHeardSquawks], [quailLocation(1), quailLocation(1)] );
+    subplot(2,1,2); ...
+        plot(1, stateEstimate(2)); hold on;
+        line([1, numberOfHeardSquawks], [quailLocation(2), quailLocation(2)] );
+        
+twoDimensionCovarianceMatrix=[ 4, 0; 0, 4 ];
+
+for dataPointIndex=2:1:length(apparentQuailLocations)
+    
+    priorStateKnowledge=posteriorStateKnowledge;
+        temporaryPosteriorStateKnowledge=0*priorStateKnowledge;  % FIXME
+        
+    % Compute the likelihood that the apparent location of the quail's squawk was made
+    % at each possible location in the bush.
+    %
+    for xPositionIndex=1:1:length(priorStateKnowledge)
+        
+        for yPositionIndex=1:1:length(priorStateKnowledge)
+            
+            workingPosition=[ xLocations(xPositionIndex); yLocations(yPositionIndex) ];
+            
+            gaussianDenominator=sqrt( (2*pi)^2 * det(twoDimensionCovarianceMatrix) );
+            
+            temporaryPosteriorStateKnowledge(xPositionIndex, yPositionIndex)=exp( -1/2 * ...
+                ( apparentQuailLocations(:, dataPointIndex) - workingPosition ).' * ...
+                ( twoDimensionCovarianceMatrix \ (apparentQuailLocations(:, dataPointIndex) - workingPosition) ) ) / gaussianDenominator;
+            
+            temporaryPosteriorStateKnowledge(xPositionIndex, yPositionIndex)=temporaryPosteriorStateKnowledge(xPositionIndex, yPositionIndex) * priorStateKnowledge(xPositionIndex, yPositionIndex);
+            
+        end;
+        
     end;
-    posteriorStateKnowledge=m/sum(sum(m)); %normalize this distribution to make it a proper probability distribution.
-    figure(1);mesh(posteriorStateKnowledge), axis([0 40 0 40 0 0.015]) %plot it
-    figure(2);
-    [a,b]=find(posteriorStateKnowledge==max(max(posteriorStateKnowledge)));  % Get the peak value; it's most likely location of the Quail.
-    sest=[xLocations(a);yLocations(b)];  %A store the coordinates of this location in the bushes
-    subplot(211);plot(n,sest(1),'k.');axis([0 numberOfHeardSquawks 2 4 ])
-    subplot(212); plot(n,sest(2),'k.');axis([0 numberOfHeardSquawks 4 6 ])
-%     pause
-end;  
-subplot(211); hold off;
-subplot(212); hold off;
+    
+    posteriorStateKnowledge=temporaryPosteriorStateKnowledge / sum(temporaryPosteriorStateKnowledge(:));
+    
+    
+    figure(h2); ...
+        mesh(posteriorStateKnowledge); colorbar; ...
+        xticklabels(4:0.5:6); yticklabels(4:0.5:6); 
+        axis([0 40 0 40 0 0.05]); ...
+        xlabel('Y'); ylabel('X'); zlabel('Probability');
+    
+    [maximumX_posteriorPMF_index, maximumY_posteriorPMF_index]=find( posteriorStateKnowledge==max(max(posteriorStateKnowledge)) );
+    stateEstimate=[ xLocations(maximumX_posteriorPMF_index); yLocations(maximumY_posteriorPMF_index) ];
+    
+    figure(h3); ...    
+        subplot(2,1,1); ...
+            plot(dataPointIndex, stateEstimate(1), 'k.'); axis([ 0 numberOfHeardSquawks 4 6 ]); ylabel('X Estimate'); grid on;
+        subplot(2,1,2); ...
+            plot(dataPointIndex, stateEstimate(2), 'k.'); axis([ 0 numberOfHeardSquawks 4 6 ]); xlabel('Data Index'); ylabel('Y Estimate'); grid on;
+
+end;
+
+fprintf(1, '\n\nFinal location estimate:  X: %3.1f, Y: %3.1f\n\n', stateEstimate(1), stateEstimate(2));
+
+
+
+%% Reference(s)
+
+% https://en.wikipedia.org/wiki/Multivariate_normal_distribution
+
+
