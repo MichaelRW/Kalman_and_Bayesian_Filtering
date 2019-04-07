@@ -19,23 +19,23 @@ rng(0);  % Fix pseudo-random number generator to produce identical values.
 %% Kalman Filter Variables
 
 % Initial State Values (1D System)
-x=50;  % Initial position of vehicle.
-P=100;  % Variance estimate of initial position.
+x=0;  % Initial position of vehicle.
+P=1;  % Variance estimate of initial position.
 
 % Time Update Parameters
 A=1;  % State transition matrix.
 B=1;  % Control input matrix.
-Q=2;  % Process noise variance.
+Q=1;  % Process noise variance.
 
 % Measurement Update Parameters
 H=1;  % Measurement matrix.
-R=1e2;  % Measurement noise variance.
+R=4;  % Measurement noise variance.
 
 
 
 %% Initialize Processing Variables
 
-simulationSize=50;
+simulationSize=1e2;
     XX=zeros(1, simulationSize);
     tt=zeros(1, simulationSize);
     xx_predicted=zeros(1, simulationSize);
