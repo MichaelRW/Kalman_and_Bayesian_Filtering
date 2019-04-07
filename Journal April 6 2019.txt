@@ -1,6 +1,12 @@
 
 
 ==================================================
+Sunday, April 7, 2019
+
+Review of site http://www.swarthmore.edu/NatSci/echeeve1/Ref/Kalman/ScalarKalman.html
+
+
+==================================================
 Saturday, April 6, 2019
 
 Done - Review of site "http://bilgin.esme.org/BitsAndBytes/KalmanFilterforDummies#".
