@@ -1,3 +1,12 @@
+
+
+%% Environment
+
+close all; clear; clc;
+set(0, 'DefaultFigureWindowStyle', 'docked');
+
+
+
 %Define the length of the simulation.
 nlen=20;
 

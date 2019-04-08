@@ -3,6 +3,8 @@
 ==================================================
 Sunday, April 7, 2019
 
+http://www.cs.unc.edu/~welch/kalman/
+
 Review of site http://www.swarthmore.edu/NatSci/echeeve1/Ref/Kalman/ScalarKalman.html
 
 
