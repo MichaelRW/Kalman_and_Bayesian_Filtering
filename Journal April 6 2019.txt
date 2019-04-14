@@ -1,6 +1,13 @@
 
 
 ==================================================
+Saturday, April 13, 2019
+
+https://www.kalmanfilter.net/alphabeta.html
+	EXAMPLE 4 – TRACKING ACCELERATING AIRCRAFT WITH THE α−β−γ FILTER
+
+
+==================================================
 Sunday, April 7, 2019
 
 http://www.cs.unc.edu/~welch/kalman/
