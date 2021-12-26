@@ -1,4 +1,15 @@
-clear
+
+
+%% Environment
+
+close all force; clc; clear; restoredefaultpath;
+
+set( 0, 'DefaultFigureWindowStyle', 'docked' );
+
+
+
+%% ph
+
 %This file is for Problem 2.26.
                                                                     
 %Parts (a) and (b):  We will first form 8 sample realizations of a
@@ -18,7 +29,7 @@ WIENER=zeros(8,11);
 
 %Now generate the Wiener processes (note the initial value is zero).
 
-rand('normal')
+randn( 0 );
 for i=1:8
    for j=1:10
       WIENER(i,j+1)=WIENER(i,j)+rand;
@@ -30,8 +41,7 @@ end
 t=0:1:10;
 plot(t,WIENER(1,:),t,WIENER(2,:),t,WIENER(3,:),t,WIENER(4,:),...
      t,WIENER(5,:),t,WIENER(6,:),t,WIENER(7,:),t,WIENER(8,:))
-title('Press ENTER to Continue')
-pause
+
 
 %Part (c):  In this part we want to form the average of an 
 %ensemble of squared Wiener-process realizations.  We will do
@@ -56,5 +66,12 @@ for i=1:42
 end
 mnsq50=(1/50)*parsum;
 plot(t,mnsq50)
-title('Press ENTER to end Problem 2.35')
-
+
+
+
+
+%% Clean-up
+
+fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
+
+

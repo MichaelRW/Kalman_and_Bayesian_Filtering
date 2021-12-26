@@ -1,4 +1,15 @@
-clear
+
+
+%% Environment
+
+close all force; clc; clear; restoredefaultpath;
+
+set( 0, 'DefaultFigureWindowStyle', 'docked' );
+
+
+
+%% ph
+
 %This file is for Problem 2.25.
 
 %The rand statement used here is from MATLAB Version 3.5, and it
@@ -18,7 +29,7 @@ phi=exp(-.05)
 %it sample (sample will be a 1 x 1024 row vector).
 
 sample=zeros(1,1024);
-rand('normal')
+rand( 0 );
 sample(1)=rand;
 for i=1:1023
    sample(i+1)=phi*sample(i)+sigmawk*rand;
@@ -27,8 +38,7 @@ end
 %Now preview the sample realization for reasonableness.
 
 plot(sample)
-title('Press ENTER to Continue')
-pause
+
 
 %Part(b):  First set up the true R(tau) for plotting.
 %(Note that the first element of vector rtrue is for zero lag.)
@@ -64,8 +74,6 @@ end
 %Now plot rtrue and vxtau together and compare.
         
 plot(tau,vxtau,tau,rtrue)
-title('Press ENTER to Continue')
-pause
 
 %Part (c):  We will only do the ensemble of 8 vxtau's here and
 %make a comparison of rtrue and the average of 8 vxtau's.  We
@@ -96,15 +104,20 @@ end
 
 plot(tau,VXTAU(1,:),tau,VXTAU(2,:),tau,VXTAU(3,:),tau,VXTAU(4,:),...
      tau,VXTAU(5,:),tau,VXTAU(6,:),tau,VXTAU(7,:),tau,VXTAU(8,:))
-title('Press ENTER to Continue')
-pause
+ 
 
 %Finally, form the average of the 8 vxtau's and compare the
-%average with rtrue.  This is a vivid demonstration (not proof)
+%average with rtrue.  This is a vivid demonstration (not proof) 
 %that the expectation of the experimental autocorrelation 
 %function is equal to the true autocorrelation function.
 
 vxtauav=mean(VXTAU);
 plot(tau,vxtauav,tau,rtrue)
-title('Press ENTER to end Problem 2.33')
-
+
+
+
+%% Clean-up
+
+fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
+
+
