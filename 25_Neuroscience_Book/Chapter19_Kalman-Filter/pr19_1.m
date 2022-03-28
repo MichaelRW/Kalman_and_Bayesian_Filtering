@@ -1,14 +1,23 @@
-% pr19_1
-%
+
+
+%% Synopsis:
+
 % Example using a Kalman filter to
 % estimate the resting membrane potential of a neuron
 % (Algorithm isn't optimized)
 
 
-clear
-close all
 
-% Parameters
+%% Environment
+
+close all; clear; clc;
+
+set( 0, 'DefaultFigureWindowStyle', 'docked' );
+
+
+
+%% Parameters
+
 N=1000;         % number of measurements
 Vm=-70;         % the membrane potential (Vm) value
 sw=1^2;         % variance process noise
@@ -48,12 +57,31 @@ for i=1:N;
     s_apriori(i+1)=s_aposteriori(i)+sw;                       % Eq (19.22)
 end;
 
-% plot the results
-figure;hold;
-plot(z,'r.');
-plot(tru,'g');
-plot(x_aposteriori)
-axis([1 N -100 10]);
-xlabel ('Time (AU)')
-ylabel ('Membrane Potential (mV)')
-title ('Kalman Filter Application: true values (green); measurements (red .); Kalman Filter Output (blue)')
+
+
+%% Plot Results
+
+figure; ...
+    plot( z, 'k' );  hold on;
+    plot( tru, '-.r' );
+    plot( x_aposteriori, '--b' );  grid on;
+    axis( [ 3e2 3.5e2 -85 -55 ] );
+    legend( 'True Values' , 'Measurements' ,'Kalman Filter Output' );
+    title ( 'Application - Scalar Kalman Filter' );
+    xlabel ( 'Time (AU) ' );  ylabel ( 'Trans-membrane Potential (mV)' );
+    %
+    shg
+
+fprintf( 1, '\nVariance - Truth:  %4.2f\tMeasurement:  %4.2f\tx posteriori:  %4.2f\n\n', var(tru), var(z), var(x_aposteriori) );
+
+
+
+%% Clean-up
+
+fprintf( 1, '\n\n\n*** Processing Complete ***\n\n\n' );
+
+
+
+%% Reference(s)
+
+
